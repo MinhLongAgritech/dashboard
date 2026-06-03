@@ -791,6 +791,24 @@ canvas:hover{opacity:.88;}
 .admin-section-title{font-size:11px;font-weight:700;color:rgba(0,255,170,.50);
   text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
 
+
+/* ── Smart Alerts ─────────────────────── */
+.alert-item{display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(0,255,170,.08);cursor:pointer;transition:background .15s;}
+.alert-item:hover{background:rgba(0,255,170,.06);}
+.alert-item:last-child{border-bottom:none;}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.alert-dot.red{background:#ff4d4d;box-shadow:0 0 6px rgba(255,77,77,.5);}
+.alert-dot.yellow{background:#f9c74f;box-shadow:0 0 6px rgba(249,199,79,.5);}
+.alert-dot.green{background:#00ffaa;box-shadow:0 0 6px rgba(0,255,170,.5);}
+.alert-dot.blue{background:#00cfff;box-shadow:0 0 6px rgba(0,207,255,.4);}
+.alert-body{flex:1;min-width:0;}
+.alert-title{font-size:12px;font-weight:600;color:rgba(255,255,255,.9);margin-bottom:2px;line-height:1.3;}
+.alert-desc{font-size:10px;color:rgba(200,230,210,.5);line-height:1.4;}
+.alert-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;align-self:center;flex-shrink:0;white-space:nowrap;}
+.alert-tag.red{background:rgba(255,77,77,.15);color:#ff4d4d;border:1px solid rgba(255,77,77,.25);}
+.alert-tag.yellow{background:rgba(249,199,79,.15);color:#f9c74f;border:1px solid rgba(249,199,79,.25);}
+.alert-tag.green{background:rgba(0,255,170,.12);color:#00ffaa;border:1px solid rgba(0,255,170,.2);}
+.alert-tag.blue{background:rgba(0,207,255,.12);color:#00cfff;border:1px solid rgba(0,207,255,.2);}
 </style>
 
 </head>
@@ -816,10 +834,16 @@ canvas:hover{opacity:.88;}
 
 <!-- DROPDOWN PANELS -->
 <div class="dd-panel" id="notif-panel">
-  <div class="dd-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Thông báo</div>
-  <div class="notif-item unread" onclick="nav('don-hang');closeAllDD()"><div class="notif-title">Đơn hàng T5/2026 tang manh</div><div class="notif-body">9.35 ty &mdash; tang 34% so T4/2026</div><div class="notif-time">Vừa cập nhật</div></div>
-  <div class="notif-item unread" onclick="nav('nhan-vien');closeAllDD()"><div class="notif-title">Pham Ba Tuoc dat 6.28 ty</div><div class="notif-body">NV #1 toàn quốc &mdash; vùng Kiên Giang</div><div class="notif-time">T9/2025 &ndash; T5/2026</div></div>
-  <div class="notif-item" onclick="nav('vung');closeAllDD()"><div class="notif-title">Kiên Giang dẫn đầu liên tục</div><div class="notif-body">26,823,000,000 &mdash; 35.7% tong DS</div><div class="notif-time">9 tháng</div></div>
+  <div class="dd-title">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    Cảnh báo thông minh
+  </div>
+  <div id="smart-alerts-list">
+    <div style="padding:10px 14px;font-size:11px;color:rgba(200,230,210,.4);text-align:center;">Đang phân tích dữ liệu...</div>
+  </div>
+  <div style="border-top:1px solid rgba(0,255,170,.1);margin-top:4px;padding:8px 14px;">
+    <button onclick="nav('nhan-vien');closeAllDD()" style="width:100%;padding:5px 0;background:rgba(0,255,170,.08);border:1px solid rgba(0,255,170,.2);border-radius:6px;color:rgba(0,255,170,.7);font-size:11px;cursor:pointer;">Xem chi tiết nhân viên →</button>
+  </div>
 </div>
 <div class="dd-panel" id="export-panel">
   <div class="dd-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Xuất báo cáo</div>
@@ -898,7 +922,7 @@ canvas:hover{opacity:.88;}
         <button class="tb-act-btn" onclick="toggleDD('export-panel')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Xuất</button>
         <button class="tb-act-btn" onclick="toggleDD('shortcuts-panel')" title="Phím tắt (Shift+?)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-1px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M21 12h-3M6 12H3M12 3V0m0 21v3"/></svg></button>
       </div>
-      <div class="ibtn" onclick="toggleDD('notif-panel')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="dot"></div></div>
+      <div class="ibtn" onclick="toggleDD('notif-panel')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="dot" id="alert-badge"></div></div>
       <div class="ibtn add" onclick="toggleDD('quickadd-panel')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
     </div>
 
@@ -2982,6 +3006,177 @@ var _origNav = nav;
 })();
 // Init dashboard filter on load
 setTimeout(()=>renderDF('df-dash'), 600);
+
+
+// ════════════════════════════════════════
+// HỆ THỐNG CẢNH BÁO THÔNG MINH
+// ════════════════════════════════════════
+
+function fmt(v){ return (v*1000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')+'tr'; }
+function pct(a,b){ return b>0?((a/b-1)*100).toFixed(0):'0'; }
+
+function buildSmartAlerts(){
+  const alerts = [];
+  const curMonth = 8; // T5/26 = index 8 (cuối)
+  const prevMonth = 7; // T4/26 = index 7
+
+  // ── A. NV dưới 50% mục tiêu ──
+  NVS.forEach(nv => {
+    const target = NV_TARGET[nv.n];
+    if(!target) return;
+    const pctAchieve = (nv.v / target * 100).toFixed(0);
+    if(nv.v < target * 0.5){
+      alerts.push({
+        type:'red', tag:'Nguy hiểm',
+        title: `${nv.n} — chỉ đạt ${pctAchieve}%`,
+        desc: `DS: ${fmt(nv.v)} / Mục tiêu: ${fmt(target)} · Vùng ${nv.r}`,
+        action: ()=>{ nav('nhan-vien'); closeAllDD(); }
+      });
+    } else if(nv.v < target * 0.75){
+      alerts.push({
+        type:'yellow', tag:'Chú ý',
+        title: `${nv.n} — đạt ${pctAchieve}% mục tiêu`,
+        desc: `Còn thiếu ${fmt(target - nv.v)} để đạt mục tiêu`,
+        action: ()=>{ nav('nhan-vien'); closeAllDD(); }
+      });
+    }
+  });
+
+  // ── B. NV gần đạt mục tiêu (90–99%) ──
+  NVS.forEach(nv => {
+    const target = NV_TARGET[nv.n];
+    if(!target) return;
+    const pctAchieve = nv.v / target * 100;
+    if(pctAchieve >= 90 && pctAchieve < 100){
+      alerts.push({
+        type:'blue', tag:'Gần đạt',
+        title: `${nv.n} — ${pctAchieve.toFixed(0)}% mục tiêu`,
+        desc: `Cần thêm ${fmt(target - nv.v)} để hoàn thành vụ HT26`,
+        action: ()=>{ nav('nhan-vien'); closeAllDD(); }
+      });
+    }
+  });
+
+  // ── C. Phân tích vùng theo tháng ──
+  // Tính DS vùng T4 vs T5 từ NVMON
+  const rmonCur  = {};  // DS vùng tháng hiện tại (T5)
+  const rmonPrev = {};  // DS vùng tháng trước (T4)
+  Object.entries(NVMON).forEach(([name, months]) => {
+    const nv = NVS.find(x=>x.n===name);
+    if(!nv) return;
+    const r = nv.r;
+    rmonCur[r]  = (rmonCur[r]  || 0) + (months[curMonth]  || 0);
+    rmonPrev[r] = (rmonPrev[r] || 0) + (months[prevMonth] || 0);
+  });
+
+  Object.entries(rmonCur).forEach(([r, cur]) => {
+    const prev = rmonPrev[r] || 0;
+    if(prev <= 0) return;
+    const diff = ((cur - prev) / prev * 100).toFixed(0);
+    const rName = RN[r] || r;
+    if(cur < prev * 0.8){
+      alerts.push({
+        type:'red', tag:'Giảm mạnh',
+        title: `${rName} — DS T5 giảm ${Math.abs(diff)}%`,
+        desc: `T4: ${fmt(prev)} → T5: ${fmt(cur)} · Cần kiểm tra`,
+        action: ()=>{ nav('vung'); closeAllDD(); }
+      });
+    } else if(cur < prev * 0.95){
+      alerts.push({
+        type:'yellow', tag:'Giảm nhẹ',
+        title: `${rName} — DS T5 giảm ${Math.abs(diff)}%`,
+        desc: `T4: ${fmt(prev)} → T5: ${fmt(cur)}`,
+        action: ()=>{ nav('vung'); closeAllDD(); }
+      });
+    }
+  });
+
+  // ── D. Vùng tăng trưởng tốt ──
+  Object.entries(rmonCur).forEach(([r, cur]) => {
+    const prev = rmonPrev[r] || 0;
+    if(prev <= 0 || cur < prev * 1.2) return;
+    const diff = ((cur - prev) / prev * 100).toFixed(0);
+    const rName = RN[r] || r;
+    alerts.push({
+      type:'green', tag:'Tăng trưởng',
+      title: `${rName} — DS T5 tăng ${diff}%`,
+      desc: `T4: ${fmt(prev)} → T5: ${fmt(cur)} · Xuất sắc!`,
+      action: ()=>{ nav('vung'); closeAllDD(); }
+    });
+  });
+
+  // ── E. NV đạt >100% mục tiêu ──
+  const stars = NVS.filter(nv => {
+    const target = NV_TARGET[nv.n];
+    return target && nv.v >= target;
+  });
+  if(stars.length > 0){
+    alerts.push({
+      type:'green', tag:'Hoàn thành',
+      title: `${stars.length} NV đã đạt mục tiêu vụ HT26`,
+      desc: stars.slice(0,3).map(x=>x.n).join(', ') + (stars.length>3?` +${stars.length-3} khác`:''),
+      action: ()=>{ nav('nhan-vien'); closeAllDD(); }
+    });
+  }
+
+  // Sắp xếp: red > yellow > blue > green
+  const order = {red:0, yellow:1, blue:2, green:3};
+  alerts.sort((a,b) => order[a.type] - order[b.type]);
+
+  // Render vào panel
+  const listEl = document.getElementById('smart-alerts-list');
+  if(!listEl) return;
+
+  if(alerts.length === 0){
+    listEl.innerHTML = '<div style="padding:12px 14px;font-size:11px;color:rgba(0,255,170,.5);text-align:center;">✓ Không có cảnh báo nào</div>';
+  } else {
+    listEl.innerHTML = alerts.map(a => `
+      <div class="alert-item" onclick="(${a.action.toString()})()">
+        <div class="alert-dot ${a.type}"></div>
+        <div class="alert-body">
+          <div class="alert-title">${a.title}</div>
+          <div class="alert-desc">${a.desc}</div>
+        </div>
+        <span class="alert-tag ${a.type}">${a.tag}</span>
+      </div>`).join('');
+  }
+
+  // Update badge count (red + yellow alerts)
+  const urgentCount = alerts.filter(a=>a.type==='red'||a.type==='yellow').length;
+  const badge = document.getElementById('alert-badge');
+  if(badge){
+    if(urgentCount > 0){
+      badge.style.display = 'block';
+      badge.setAttribute('data-count', urgentCount);
+      badge.title = urgentCount + ' cảnh báo cần xử lý';
+      // Pulse animation for urgent
+      badge.style.background = '#ff4d4d';
+      badge.style.boxShadow = '0 0 8px rgba(255,77,77,.7)';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  // Update dashboard header badge if exists
+  const topBadge = document.getElementById('alert-count-badge');
+  if(topBadge) topBadge.textContent = urgentCount > 0 ? urgentCount : '';
+  
+  return alerts.length;
+}
+
+// Run after page load (data is ready)
+setTimeout(buildSmartAlerts, 800);
+
+// Add animated pulse to badge
+const alertBadgeStyle = document.createElement('style');
+alertBadgeStyle.textContent = `
+  #alert-badge { animation: pulse-red 2s infinite; }
+  @keyframes pulse-red {
+    0%,100%{ box-shadow:0 0 0 0 rgba(255,77,77,.6); }
+    50%{ box-shadow:0 0 0 5px rgba(255,77,77,0); }
+  }
+`;
+document.head.appendChild(alertBadgeStyle);
 
 </script>
 <!-- Mobile sidebar overlay -->
