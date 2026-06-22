@@ -2969,11 +2969,13 @@ function initDS(){
     {labels:_dsGrpNames,
      datasets:[{data:_dsGrpVals,backgroundColor:_dsGrpColors.map(c=>c+'cc'),borderColor:_dsGrpColors,borderWidth:2}]},
     {cutout:'52%',animation:{animateRotate:true,duration:800},
+     onClick:(e,els)=>{ if(els.length){ showSPGroupPopup(_dsGrpNames[els[0].index], _dsGrpColors[els[0].index]); } },
      plugins:{
        datalabels:{display:function(ctx){return ctx.dataset.data[ctx.dataIndex]/_dsGrpTot>=0.05;},formatter:(v,ctx)=>{const l=_dsGrpNames[ctx.dataIndex].slice(0,6);return (v/_dsGrpTot*100).toFixed(0)+'%\n'+l;},color:'#fff',font:{size:10,weight:'bold'},anchor:'center',align:'center',textAlign:'center'},
        legend:{display:true,position:'right',labels:{color:'#fff',font:{size:9.5},boxWidth:9,padding:6,generateLabels:function(c){return c.data.labels.map((l,i)=>({text:l+'\n'+ftyShort(c.data.datasets[0].data[i]),fillStyle:c.data.datasets[0].backgroundColor[i],strokeStyle:'transparent',lineWidth:0,hidden:false,index:i,fontColor:'#fff'}));}}},
        tooltip:{callbacks:{label:c=>`${c.label}: ${ftyShort(c.parsed)} (${(c.parsed/_dsGrpTot*100).toFixed(1)}%)`}}
      },scales:{x:{display:false},y:{display:false}}});
+  document.getElementById('c-ds-donut-group').style.cursor='pointer';
 
   // ── DS EXTRA: Bar ngang Top Đại lý ──────────────────────────
   const _dsKHmap={};
@@ -2989,10 +2991,12 @@ function initDS(){
     {indexAxis:'y',
      layout:{padding:{right:85}},
      animation:{duration:700,easing:'easeOutQuart'},
+     onClick:(e,els)=>{ if(els.length){ const kh=_dsTop15KH[els[0].index]; if(kh){ const khObj=KHS.find(x=>x.ma===kh.ma||x.n===kh.n); if(khObj) kpiKH(khObj); else showVungKHPopup(kh.r||'KG'); } } },
      plugins:{legend:{display:false},
        datalabels:{display:true,anchor:'end',align:'end',offset:4,color:'#fff',font:{size:9,weight:'bold'},formatter:(v,ctx)=>ftyShort(v)+'  '+(v/_dsKHTot*100).toFixed(0)+'%'},
        tooltip:{callbacks:{label:c=>`${ftyShort(c.parsed.x)} (${(c.parsed.x/_dsKHTot*100).toFixed(1)}%)`,title:it=>_dsTop15KH[it[0].dataIndex].n+' — '+(RN[_dsTop15KH[it[0].dataIndex].r]||_dsTop15KH[it[0].dataIndex].r)}}},
      scales:{x:{ticks:{callback:v=>v+'ty',color:'#6b9e84',font:{size:9}},grid:{color:'rgba(52,211,153,.05)'}},y:{grid:{display:false},ticks:{color:'#e0faf2',font:{size:9}}}}});
+  document.getElementById('c-ds-bar-kh').style.cursor='pointer';
 })();
 }
 function updDS(r){
@@ -3326,13 +3330,14 @@ function renderCNVungBar(tab) {
   mk('c-cn-vung-bar','bar',
     {labels, datasets:[{data:vals, backgroundColor:colors, borderColor:colors.map(c=>c.slice(0,7)), borderWidth:1.5, borderRadius:4, label:'CN (tỷ)'}]},
     {indexAxis:'y',
+     onClick:(e,els)=>{ if(els.length){ const r=labels[els[0].index]; if(r) showVungKHPopup(r); } },
      plugins:{legend:{display:false},
        datalabels:{display:true,anchor:'end',align:'end',color:'#fb923c',font:{size:10,weight:'bold'},formatter:v=>v>0?v.toFixed(2)+'ty':''},
-       tooltip:{callbacks:{label:c=>`${Math.round(c.parsed.x*1e9).toLocaleString('vi-VN')}đ`}},
+       tooltip:{callbacks:{label:c=>`${Math.round(c.parsed.x*1e9).toLocaleString('vi-VN')}đ`}}},
      scales:{x:{ticks:{callback:v=>v+'ty',color:'#6b9e84',font:{size:9}},grid:{color:'rgba(249,115,22,.08)'}},
-             y:{grid:{display:false},ticks:{color:'#e0faf2',font:{size:10}}}}}});
-
-}
+             y:{grid:{display:false},ticks:{color:'#e0faf2',font:{size:10}}}}});
+  const _cnVungBarEl = document.getElementById('c-cn-vung-bar');
+  if(_cnVungBarEl) _cnVungBarEl.style.cursor='pointer';
 
 function renderCNVungCompare() {
   // DS theo vùng từ LIVE_ROWS
@@ -3351,12 +3356,14 @@ function renderCNVungCompare() {
        {label:'DS (tỷ)',data:dsVals,backgroundColor:'rgba(0,255,170,.35)',borderColor:'rgba(0,255,170,.8)',borderWidth:1.5,borderRadius:3},
        {label:'CN (tỷ)',data:cnVals,backgroundColor:'rgba(249,115,22,.45)',borderColor:'rgba(249,115,22,.9)',borderWidth:1.5,borderRadius:3}
      ]},
-    {plugins:{legend:{display:true,labels:{color:'#fff',font:{size:10},boxWidth:10}},
+    {onClick:(e,els)=>{ if(els.length){ const r=vungs[els[0].index]; if(r) showVungKHPopup(r); } },
+     plugins:{legend:{display:true,labels:{color:'#fff',font:{size:10},boxWidth:10}},
        datalabels:{display:false},
-
-       tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${Math.round(c.parsed.y*1e9).toLocaleString('vi-VN')}đ`}},
+       tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${Math.round(c.parsed.y*1e9).toLocaleString('vi-VN')}đ`}}},
      scales:{x:{grid:{display:false},ticks:{color:'#6b9e84',font:{size:9}}},
-             y:{ticks:{callback:v=>v+'ty',color:'#6b9e84',font:{size:9}},grid:{color:'rgba(255,255,255,.05)'}}}}});
+             y:{ticks:{callback:v=>v+'ty',color:'#6b9e84',font:{size:9}},grid:{color:'rgba(255,255,255,.05)'}}}});
+  const _cnVungCmpEl = document.getElementById('c-cn-vung-compare');
+  if(_cnVungCmpEl) _cnVungCmpEl.style.cursor='pointer';
 
 }
 
