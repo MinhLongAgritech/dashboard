@@ -5964,6 +5964,8 @@ function showToast(msg,c){const t=document.createElement('div');t.style.cssText=
 async function fetchSheets(){
   setSheetsStatus('loading');
   showSkeleton();
+  showToast('🔄 Đang fetch... proto=' + location.protocol, '#facc15');
+  console.log('[fetchSheets] START — protocol:', location.protocol, 'URL:', SHEETS_URL.slice(0,60));
   // Dùng JSONP để bypass CORS khi mở file:// hoặc cross-origin
   const JSONP_CB = '__mlSheetsCallback';
   const JSONP_CB_CN = '__mlCNCallback';
@@ -6017,13 +6019,40 @@ async function fetchSheets(){
 
   try {
     let json;
-    // Thử JSONP trước (bypass CORS, phù hợp Apps Script redirect)
-    try {
-      json = await jsonpFetch(SHEETS_URL, JSONP_CB);
-    } catch(jsonpErr) {
-      console.warn('[Sheets] JSONP thất bại, thử direct fetch:', jsonpErr.message);
-      json = await proxyFetch(SHEETS_URL);
-    }
+    // Apps Script trả về JSON thuần (không JSONP) — dùng fetch trực tiếp
+    // Apps Script có CORS headers khi deploy đúng cách
+    const fetchWithRetry = async () => {
+      // Thử 1: fetch trực tiếp với redirect follow
+      try {
+        const res = await fetch(SHEETS_URL + '?t=' + Date.now(), {
+          method: 'GET',
+          redirect: 'follow'
+        });
+        if(res.ok) return await res.json();
+        throw new Error('HTTP ' + res.status);
+      } catch(e1) {
+        console.warn('[Sheets] Direct fetch lỗi:', e1.message);
+        showToast('⚠ Fetch1: ' + e1.message.slice(0,40), '#f97316');
+      }
+      // Thử 2: fetch không có mode (browser tự xử lý CORS)
+      try {
+        const res2 = await fetch(SHEETS_URL);
+        if(res2.ok){ showToast('✓ Fetch2 OK', '#4ade80'); return await res2.json(); }
+        throw new Error('HTTP ' + res2.status);
+      } catch(e2) {
+        console.warn('[Sheets] Fetch 2 lỗi:', e2.message);
+        showToast('⚠ Fetch2: ' + e2.message.slice(0,40), '#f97316');
+      }
+      // Thử 3: allorigins proxy (bypass CORS hoàn toàn)
+      showToast('🌐 Thử allorigins proxy...', '#60a5fa');
+      const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(SHEETS_URL + '?t=' + Date.now());
+      const res3 = await fetch(proxyUrl);
+      if(!res3.ok) throw new Error('Proxy HTTP ' + res3.status);
+      const wrapper = await res3.json();
+      showToast('✓ Proxy OK — parse JSON...', '#4ade80');
+      return JSON.parse(wrapper.contents);
+    };
+    json = await fetchWithRetry();
     const rows = json.rows || json.data || (Array.isArray(json) ? json : 
                  (json.agro ? [...(json.agro||[]), ...(json.agri||[])] : null));
     if(!rows || !rows.length) throw new Error('Dữ liệu trống');
