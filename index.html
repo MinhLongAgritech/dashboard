@@ -9080,25 +9080,25 @@ function showTrendDetailModal(title, labels, histVals, fcDs) {
   var fc1Chg = lastV>0?(fc1-lastV)/lastV*100:0;
   var fc2Chg = fc1>0?(fc2-fc1)/fc1*100:0;
 
-  // ── KPI ROW (3 cards) ──────────────────────────────────────
+  // ── KPI ROW (3 cards) — light theme ──────────────────────
   function kcard(lbl, val, sub, subColor) {
-    return '<div style="flex:1;min-width:0;background:rgba(13,148,136,.06);border:1px solid rgba(13,148,136,.18);border-radius:10px;padding:12px 14px;">'
-      +'<div style="font-size:9.5px;color:rgba(167,243,208,.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;">'+lbl+'</div>'
-      +'<div style="font-size:20px;font-weight:800;color:#fff;font-family:DM Mono,monospace;line-height:1;margin-bottom:5px;">'+val+'</div>'
-      +'<div style="font-size:11px;color:'+subColor+';">'+sub+'</div>'
+    return '<div style="flex:1;min-width:0;background:#f0fdfa;border:1px solid rgba(13,148,136,.22);border-radius:12px;padding:14px 16px;">'
+      +'<div style="font-size:10px;color:#0d9488;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">'+lbl+'</div>'
+      +'<div style="font-size:21px;font-weight:800;color:#0f172a;font-family:DM Mono,monospace;line-height:1.15;margin-bottom:6px;word-break:break-word;">'+val+'</div>'
+      +'<div style="font-size:11.5px;font-weight:700;color:'+subColor+';">'+sub+'</div>'
       +'</div>';
   }
-  var kpiRow = '<div style="display:flex;gap:8px;margin-bottom:14px;">'
+  var kpiRow = '<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">'
     +kcard('Tháng gần nhất ('+last6Lbls[last6Lbls.length-1]+')', fmtV(lastV), (momChg>=0?'▲':'▼')+Math.abs(momChg).toFixed(1)+'% so tháng trước', momChg>=0?'#0d9488':'#dc2626')
     +kcard('Dự báo '+fcLbl1, fmtV(fc1), (fc1Chg>=0?'▲':'▼')+Math.abs(fc1Chg).toFixed(1)+'% so tháng trước', fc1Chg>=0?'#0d9488':'#dc2626')
     +kcard('Dự báo '+fcLbl2, fmtV(fc2), (fc2Chg>=0?'▲':'▼')+Math.abs(fc2Chg).toFixed(1)+'% so tháng trước', fc2Chg>=0?'#0d9488':'#dc2626')
     +'</div>';
 
-  // ── SPARKLINE SVG ──────────────────────────────────────────
+  // ── SPARKLINE SVG — light theme, full width ───────────────
   var allV = last6Vals.concat([fc1,fc2]);
   var allL = last6Lbls.concat([fcLbl1,fcLbl2]);
-  var maxSp = Math.max.apply(null,allV)*1.12||1;
-  var W=520,H=110,pL=36,pR=12,pT=14,pB=26;
+  var maxSp = Math.max.apply(null,allV)*1.15||1;
+  var W=900,H=160,pL=54,pR=20,pT=20,pB=34;
   var xs=last6Vals.length+2, xw=(W-pL-pR)/(xs-1);
   function gx(i){return pL+i*xw;}
   function gy(v){return pT+(H-pT-pB)*(1-v/maxSp);}
@@ -9107,8 +9107,8 @@ function showTrendDetailModal(title, labels, histVals, fcDs) {
   var yTicks='';
   [0,0.5,1].forEach(function(f){
     var v=maxSp*f, y=gy(v);
-    yTicks+='<line x1="'+pL+'" y1="'+y.toFixed(1)+'" x2="'+(W-pR)+'" y2="'+y.toFixed(1)+'" stroke="rgba(255,255,255,.06)" stroke-dasharray="3,3"/>'
-      +'<text x="'+(pL-4)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="7.5" fill="rgba(167,243,208,.35)">'+fmtV(v)+'</text>';
+    yTicks+='<line x1="'+pL+'" y1="'+y.toFixed(1)+'" x2="'+(W-pR)+'" y2="'+y.toFixed(1)+'" stroke="rgba(15,23,42,.08)" stroke-dasharray="3,3"/>'
+      +'<text x="'+(pL-8)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="10" fill="#94a3b8">'+fmtV(v)+'</text>';
   });
 
   // History path + area
@@ -9123,85 +9123,85 @@ function showTrendDetailModal(title, labels, histVals, fcDs) {
 
   // Hist dots
   var hDots=last6Vals.map(function(v,i){
-    return '<circle cx="'+gx(i).toFixed(1)+'" cy="'+gy(v).toFixed(1)+'" r="3.5" fill="#0d9488" stroke="#020f08" stroke-width="1.5"/>';
+    return '<circle cx="'+gx(i).toFixed(1)+'" cy="'+gy(v).toFixed(1)+'" r="4.5" fill="#0d9488" stroke="#fff" stroke-width="2"/>';
   }).join('');
 
   // FC dots + value labels
   var fcDotLabel=''
-    +'<circle cx="'+gx(last6Vals.length).toFixed(1)+'" cy="'+gy(fc1).toFixed(1)+'" r="5" fill="#0d9488" stroke="#020f08" stroke-width="2"/>'
-    +'<circle cx="'+gx(last6Vals.length+1).toFixed(1)+'" cy="'+gy(fc2).toFixed(1)+'" r="5" fill="#0d9488" stroke="#020f08" stroke-width="2"/>'
-    +'<text x="'+gx(last6Vals.length).toFixed(1)+'" y="'+(gy(fc1)-9)+'" text-anchor="middle" font-size="8.5" fill="#0d9488" font-weight="700">'+fmtV(fc1)+'</text>'
-    +'<text x="'+gx(last6Vals.length+1).toFixed(1)+'" y="'+(gy(fc2)-9)+'" text-anchor="middle" font-size="8.5" fill="#0d9488" font-weight="700">'+fmtV(fc2)+'</text>';
+    +'<circle cx="'+gx(last6Vals.length).toFixed(1)+'" cy="'+gy(fc1).toFixed(1)+'" r="6" fill="#0d9488" stroke="#fff" stroke-width="2.5"/>'
+    +'<circle cx="'+gx(last6Vals.length+1).toFixed(1)+'" cy="'+gy(fc2).toFixed(1)+'" r="6" fill="#0d9488" stroke="#fff" stroke-width="2.5"/>'
+    +'<text x="'+gx(last6Vals.length).toFixed(1)+'" y="'+(gy(fc1)-12)+'" text-anchor="middle" font-size="11" fill="#0d9488" font-weight="800">'+fmtV(fc1)+'</text>'
+    +'<text x="'+gx(last6Vals.length+1).toFixed(1)+'" y="'+(gy(fc2)-12)+'" text-anchor="middle" font-size="11" fill="#0d9488" font-weight="800">'+fmtV(fc2)+'</text>';
 
   // X labels
   var xLabels=allL.map(function(l,i){
     var isFc=i>=last6Vals.length;
-    return '<text x="'+gx(i).toFixed(1)+'" y="'+(H-pB+14)+'" text-anchor="middle" font-size="8" fill="'+(isFc?'rgba(13,148,136,.75)':'rgba(167,243,208,.45)')+(isFc?'" font-weight="700':'')+'">'+(isFc?'📈 ':'')+l+'</text>';
+    return '<text x="'+gx(i).toFixed(1)+'" y="'+(H-pB+18)+'" text-anchor="middle" font-size="10.5" fill="'+(isFc?'#0d9488':'#64748b')+'"'+(isFc?' font-weight="700"':'')+'>'+(isFc?'📈 ':'')+l+'</text>';
   }).join('');
 
   // FC background
-  var fcBg='<rect x="'+gx(last6Vals.length-1).toFixed(1)+'" y="'+pT+'" width="'+(W-pR-gx(last6Vals.length-1)).toFixed(1)+'" height="'+(H-pT-pB)+'" fill="rgba(13,148,136,.05)" rx="4"/>';
+  var fcBg='<rect x="'+gx(last6Vals.length-1).toFixed(1)+'" y="'+pT+'" width="'+(W-pR-gx(last6Vals.length-1)).toFixed(1)+'" height="'+(H-pT-pB)+'" fill="rgba(13,148,136,.06)" rx="4"/>';
 
-  var svgChart='<div style="margin-bottom:14px;padding:12px 14px 8px;background:rgba(0,0,0,.3);border:1px solid rgba(13,148,136,.14);border-radius:10px;">'
-    +'<div style="font-size:9.5px;color:rgba(13,148,136,.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">Xu hướng + Dự báo WMA &nbsp;<span style="color:rgba(255,255,255,.2);font-weight:400;">— '+trendIcon+' '+trendTxt+'</span></div>'
+  var svgChart='<div style="margin-bottom:16px;padding:14px 16px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">'
+    +'<div style="font-size:10.5px;color:#0d9488;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Xu hướng + Dự báo WMA &nbsp;<span style="color:#64748b;font-weight:600;text-transform:none;letter-spacing:0;">— '+trendIcon+' '+trendTxt+'</span></div>'
     +'<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="overflow:visible;display:block;">'
     +yTicks+fcBg
-    +'<path d="'+aPath+'" fill="rgba(13,148,136,.06)"/>'
+    +'<path d="'+aPath+'" fill="rgba(13,148,136,.10)"/>'
     +'<path d="'+hPath+'" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>'
     +'<path d="'+fPath+'" fill="none" stroke="#0d9488" stroke-width="2" stroke-dasharray="6,4" stroke-linejoin="round"/>'
     +hDots+fcDotLabel+xLabels
     +'</svg></div>';
 
-  // ── LỊCH SỬ TABLE ──────────────────────────────────────────
+  // ── LỊCH SỬ TABLE — light theme ───────────────────────────
   var histRows=last6Vals.map(function(v,i){
     var prev=i>0?last6Vals[i-1]:null;
     var chg=prev&&prev>0?(v-prev)/prev*100:null;
     var bar=Math.round(v/maxSp*100);
-    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
-      +'<td style="padding:7px 10px;color:rgba(200,235,215,.6);font-size:11px;white-space:nowrap;width:60px;">'+last6Lbls[i]+'</td>'
-      +'<td style="padding:7px 10px;width:100%;"><div style="height:5px;background:rgba(13,148,136,.12);border-radius:3px;"><div style="height:5px;width:'+bar+'%;background:linear-gradient(90deg,rgba(13,148,136,.5),rgba(13,148,136,.2));border-radius:3px;"></div></div></td>'
-      +'<td style="padding:7px 10px;text-align:right;font-family:DM Mono,monospace;font-size:12px;font-weight:600;white-space:nowrap;color:#fff;">'+fmtV(v)+'</td>'
-      +'<td style="padding:7px 14px;text-align:right;font-size:10.5px;white-space:nowrap;">'+(chg!=null?'<span style="color:'+(chg>=0?'#0d9488':'#dc2626')+'">'+(chg>=0?'▲':'▼')+Math.abs(chg).toFixed(1)+'%</span>':'<span style="color:rgba(255,255,255,.2)">—</span>')+'</td>'
+    return '<tr style="border-bottom:1px solid #f1f5f9;">'
+      +'<td style="padding:8px 12px;color:#475569;font-size:12px;font-weight:600;white-space:nowrap;width:70px;">'+last6Lbls[i]+'</td>'
+      +'<td style="padding:8px 12px;width:100%;"><div style="height:6px;background:rgba(13,148,136,.10);border-radius:3px;"><div style="height:6px;width:'+bar+'%;background:linear-gradient(90deg,#0d9488,#5eead4);border-radius:3px;"></div></div></td>'
+      +'<td style="padding:8px 12px;text-align:right;font-family:DM Mono,monospace;font-size:13px;font-weight:700;white-space:nowrap;color:#0f172a;">'+fmtV(v)+'</td>'
+      +'<td style="padding:8px 14px;text-align:right;font-size:11.5px;font-weight:700;white-space:nowrap;">'+(chg!=null?'<span style="color:'+(chg>=0?'#0d9488':'#dc2626')+'">'+(chg>=0?'▲':'▼')+Math.abs(chg).toFixed(1)+'%</span>':'<span style="color:#cbd5e1">—</span>')+'</td>'
       +'</tr>';
   }).join('');
 
-  var histTable='<div style="margin-bottom:14px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;">'
-    +'<div style="padding:9px 12px;border-bottom:1px solid rgba(13,148,136,.1);font-size:9.5px;color:rgba(13,148,136,.55);text-transform:uppercase;letter-spacing:.7px;">Lịch sử 6 tháng</div>'
+  var histTable='<div style="margin-bottom:16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">'
+    +'<div style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:10.5px;color:#0d9488;font-weight:700;text-transform:uppercase;letter-spacing:.6px;">Lịch sử 6 tháng</div>'
     +'<table style="width:100%;border-collapse:collapse;">'
-    +'<tr style="border-bottom:1px solid rgba(13,148,136,.1);"><th style="padding:5px 10px;text-align:left;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">THÁNG</th><th></th><th style="padding:5px 10px;text-align:right;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">DS</th><th style="padding:5px 14px;text-align:right;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">MoM</th></tr>'
+    +'<tr style="border-bottom:1px solid #e2e8f0;"><th style="padding:6px 12px;text-align:left;font-size:10px;color:#94a3b8;font-weight:700;">THÁNG</th><th></th><th style="padding:6px 12px;text-align:right;font-size:10px;color:#94a3b8;font-weight:700;">DS</th><th style="padding:6px 14px;text-align:right;font-size:10px;color:#94a3b8;font-weight:700;">MoM</th></tr>'
     +histRows+'</table></div>';
 
-  // ── WMA DETAIL ─────────────────────────────────────────────
+  // ── WMA DETAIL — light theme ──────────────────────────────
   var wmaVals=cleanVals.slice(-3), wmaLbls=cleanLbls.slice(-3);
   var wmaRows='', wmaCalc=0;
   var weights=[0.20,0.30,0.50];
   wmaVals.forEach(function(v,i){
     var w=weights[i], contrib=v*w;
     wmaCalc+=contrib;
-    wmaRows+='<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
-      +'<td style="padding:6px 10px;color:rgba(200,235,215,.55);font-size:11px;">'+wmaLbls[i]+(i===2?' <span style="font-size:9px;color:rgba(255,255,255,.25)">(gần nhất)</span>':'')+'</td>'
-      +'<td style="padding:6px 10px;font-family:DM Mono,monospace;font-size:11px;color:rgba(200,235,215,.8);">'+fmtFull(v)+'</td>'
-      +'<td style="padding:6px 10px;text-align:center;font-size:10px;color:rgba(200,235,215,.4);">× '+(w*100|0)+'%</td>'
-      +'<td style="padding:6px 14px;text-align:right;font-family:DM Mono,monospace;font-size:11px;color:#60a5fa;font-weight:600;">'+fmtFull(contrib)+'</td>'
+    wmaRows+='<tr style="border-bottom:1px solid #f1f5f9;">'
+      +'<td style="padding:7px 12px;color:#475569;font-size:12px;font-weight:600;">'+wmaLbls[i]+(i===2?' <span style="font-size:10px;color:#94a3b8;font-weight:500;">(gần nhất)</span>':'')+'</td>'
+      +'<td style="padding:7px 12px;font-family:DM Mono,monospace;font-size:12px;color:#1e293b;font-weight:600;">'+fmtFull(v)+'</td>'
+      +'<td style="padding:7px 12px;text-align:center;font-size:11px;color:#64748b;font-weight:600;">× '+(w*100|0)+'%</td>'
+      +'<td style="padding:7px 14px;text-align:right;font-family:DM Mono,monospace;font-size:12px;color:#2563eb;font-weight:700;">'+fmtFull(contrib)+'</td>'
       +'</tr>';
   });
-  var wmaBox='<div style="background:rgba(0,0,0,.25);border:1px solid rgba(13,148,136,.14);border-radius:10px;overflow:hidden;">'
-    +'<div style="padding:9px 12px;border-bottom:1px solid rgba(13,148,136,.10);display:flex;align-items:center;gap:8px;">'
-    +'<span style="font-size:9.5px;font-weight:700;color:rgba(13,148,136,.8);text-transform:uppercase;letter-spacing:.7px;">⚙ Phương pháp WMA</span>'
-    +'<span style="font-size:10px;color:rgba(200,235,215,.3);">Weighted Moving Average</span></div>'
-    +'<div style="padding:9px 12px 4px;">'
-    +'<div style="font-size:10.5px;color:rgba(200,235,215,.4);margin-bottom:8px;">Trọng số: <span style="color:rgba(13,148,136,.7)">T₋₃ × 20% &nbsp;+&nbsp; T₋₂ × 30% &nbsp;+&nbsp; T₋₁ × 50%</span></div>'
+  var wmaBox='<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">'
+    +'<div style="padding:10px 14px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'
+    +'<span style="font-size:10.5px;font-weight:700;color:#0d9488;text-transform:uppercase;letter-spacing:.6px;">⚙ Phương pháp WMA</span>'
+    +'<span style="font-size:11px;color:#94a3b8;">Weighted Moving Average</span></div>'
+    +'<div style="padding:10px 14px 6px;">'
+    +'<div style="font-size:11.5px;color:#64748b;margin-bottom:9px;">Trọng số: <span style="color:#0d9488;font-weight:700;">T₋₃ × 20% &nbsp;+&nbsp; T₋₂ × 30% &nbsp;+&nbsp; T₋₁ × 50%</span></div>'
     +'<table style="width:100%;border-collapse:collapse;">'
-    +'<tr style="border-bottom:1px solid rgba(13,148,136,.10);"><th style="padding:4px 10px;text-align:left;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">THÁNG</th><th style="padding:4px 10px;text-align:left;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">GIÁ TRỊ</th><th style="padding:4px 10px;text-align:center;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">TRỌNG SỐ</th><th style="padding:4px 14px;text-align:right;font-size:9px;color:rgba(13,148,136,.4);font-weight:700;">ĐÓNG GÓP</th></tr>'
+    +'<tr style="border-bottom:1px solid #e2e8f0;"><th style="padding:5px 12px;text-align:left;font-size:10px;color:#94a3b8;font-weight:700;">THÁNG</th><th style="padding:5px 12px;text-align:left;font-size:10px;color:#94a3b8;font-weight:700;">GIÁ TRỊ</th><th style="padding:5px 12px;text-align:center;font-size:10px;color:#94a3b8;font-weight:700;">TRỌNG SỐ</th><th style="padding:5px 14px;text-align:right;font-size:10px;color:#94a3b8;font-weight:700;">ĐÓNG GÓP</th></tr>'
     +wmaRows
-    +'<tr style="background:rgba(13,148,136,.06);border-top:1px solid rgba(13,148,136,.2);">'
-    +'<td colspan="3" style="padding:8px 10px;font-size:11px;font-weight:700;color:#0d9488;">= Dự báo '+fcLbl1+'</td>'
-    +'<td style="padding:8px 14px;text-align:right;font-family:DM Mono,monospace;font-size:13px;font-weight:800;color:#0d9488;">'+fmtFull(fc1)+'</td></tr>'
+    +'<tr style="background:#f0fdfa;border-top:1px solid rgba(13,148,136,.25);">'
+    +'<td colspan="3" style="padding:9px 12px;font-size:12px;font-weight:700;color:#0d9488;">= Dự báo '+fcLbl1+'</td>'
+    +'<td style="padding:9px 14px;text-align:right;font-family:DM Mono,monospace;font-size:14px;font-weight:800;color:#0d9488;">'+fmtFull(fc1)+'</td></tr>'
     +'</table>'
-    +'<div style="padding:8px 2px 8px;font-size:10.5px;color:rgba(200,235,215,.4);">Xu hướng tuyến tính: <span style="color:'+(slope>=0?'#0d9488':'#dc2626')+'">'+trendIcon+' '+trendTxt+' ('+(slope>=0?'+':'')+slope.toFixed(3)+' tỷ/tháng)</span></div>'
+    +'<div style="padding:9px 2px 9px;font-size:11.5px;color:#64748b;">Xu hướng tuyến tính: <span style="color:'+(slope>=0?'#0d9488':'#dc2626')+';font-weight:700;">'+trendIcon+' '+trendTxt+' ('+(slope>=0?'+':'')+slope.toFixed(3)+' tỷ/tháng)</span></div>'
     +'</div></div>';
 
-  var body = kpiRow + svgChart + histTable + wmaBox;
+  var body = '<div style="max-width:100%;">' + kpiRow + svgChart + histTable + wmaBox + '</div>';
   openModal('📊 ' + title, 'Phân tích xu hướng & Dự báo WMA', body, null, '');
 }
 
